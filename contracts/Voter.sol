@@ -13,37 +13,6 @@ contract Voter {
     mapping(address => bool) hasVoted;
     mapping(string => OptionPos) posOfOption;
 
-    /**
-     * Struct
-     *   - Collection of fields
-     *   - Like a class without methods
-     *   - Can be nested
-     *
-     * mapping(string => Option) posOfOption;
-     *
-     * Memory in SC
-     *   - Storage
-     *     -- Contract state
-     *     -- Persistent between calls
-     *     -- SSTORE command -> up to 20000 gas (Expensive to use)
-     *   - Memory
-     *     -- Temporary variables
-     *     -- Exists during a method execution
-     *     -- MSTORE command -> 3 gas (Cheap to use)
-     *
-     * contract Foo {
-     *   uint arr;
-     *
-     *   function method() {
-     *     uint[] memory memoryArr = arr;
-     *     memoryArr[0] = 0; // Modifies a copy
-     *
-     *     uint[] storage storageArr = arr;
-     *     storageArr[0] = 0; // Modifies an original
-     *   }
-     * }
-     */
-
     constructor(string[] _options) public {
         options = _options;
         votes.length = _options.length;
