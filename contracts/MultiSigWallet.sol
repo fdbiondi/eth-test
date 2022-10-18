@@ -2,41 +2,6 @@ pragma solidity >=0.4.21 <0.7.0;
 pragma experimental ABIEncoderV2;
 
 contract MultiSigWallet {
-    /**
-     * Payable modifier
-     * function buy(uint quantity) payable {
-     *   // check amount
-     *   require(msg.value > 100);
-     *   // payment accepted
-     * }
-     *
-     * // user send funds without call a method
-     * // called when ether is sent without calling a method
-     * function () payable {
-     *   require(msg.value > 100);
-     * }
-     *
-     * Check balance account
-     *
-     * address addr = msg.sender;
-     * // Get balance
-     * uint accountBalance = addr.balance;
-     * // Contract's balance
-     * address(this).balance
-     *
-     * Send payment
-     *
-     * address addr = ...;
-     * // reverts exec if fails
-     * addr.transfer(1000); // weis not ether -> recommended!
-     *
-     * // returns false if fails
-     * bool succeeded = add.send(1000);
-     * // Should check return value!
-     * // unsafe and should be avoided
-     *
-     */
-
     uint minApprovers;
 
     address beneficiary;
@@ -69,7 +34,21 @@ contract MultiSigWallet {
         }
     }
 
-    function approve() public {}
+    function approve() public {
+        require(isApprover[msg.sender], "Not an approver");
+
+        if (!approvedBy[msg.sender]) {
+            approvalsNum++;
+            approvedBy[msg.sender] = true;
+        }
+
+        if (approvalsNum == minApprovers) {
+            beneficiary.send(address(this).balance);
+
+            selfdestruct(owner);
+        }
+
+    }
 
     function reject() public {
         require(isApprover[msg.sender], "Not an approver");
